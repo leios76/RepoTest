@@ -1,8 +1,98 @@
 <html>
-  <head>
-    
-  </head>
-  <body>
-    Hello World
-  </body>
+
+<head>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body>
+    <h1>Location:</h1>
+    <div>nx: <span name="nx" id="nx"></span></div>
+    <div>ny: <span name="ny" id="ny"></span></div>
+</body>
+<script>
+
+    const getLocation = () => {
+        if (navigator.geolocation) {
+            // GPS를 지원하면
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log(`latitude 위도 : ${position.coords.latitude}`);
+                    console.log(`longitude 경도 : ${position.coords.longitude}`);
+
+                    var map = {};
+
+                    var lon = position.coords.longitude;
+                    var lat = position.coords.latitude;
+                    var x, y;
+                    var slat1, slat2, alon, alat, xn, yn;
+                    var ra, theta;
+
+                    map.Re = 6371.00877;     // 지도반경
+                    map.grid = 5.0;     // 격자간격 (km)
+                    map.slat1 = 30.0;     // 표준위도 1
+                    map.slat2 = 60.0;     // 표준위도 2
+                    map.olon = 126.0;     // 기준점 경도
+                    map.olat = 38.0;     // 기준점 위도
+                    map.xo = 210.0 / map.grid;   // 기준점 X좌표
+                    map.yo = 675.0 / map.grid;   // 기준점 Y좌표
+                    map.pi = Math.asin(1.0) * 2.0;
+                    map.degrad = map.pi / 180.0;
+                    map.raddeg = 180.0 / map.pi;
+
+                    re = map.Re / map.grid;
+                    slat1 = map.slat1 * map.degrad;
+                    slat2 = map.slat2 * map.degrad;
+                    olon = map.olon * map.degrad;
+                    olat = map.olat * map.degrad;
+
+                    sn = Math.tan(map.pi * 0.25 + slat2 * 0.5) / Math.tan(map.pi * 0.25 + slat1 * 0.5);
+                    sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+                    sf = Math.tan(map.pi * 0.25 + slat1 * 0.5);
+                    sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+                    ro = Math.tan(map.pi * 0.25 + olat * 0.5);
+                    ro = re * sf / Math.pow(ro, sn);
+
+                    ra = Math.tan(map.pi * 0.25 + lat * map.degrad * 0.5);
+                    if (ra < 0) {
+                        ra = re * sf / -Math.pow(-ra, sn);
+                    } else {
+                        ra = re * sf / Math.pow(ra, sn);
+                    }
+                    theta = lon * map.degrad - olon;
+                    if (theta > map.pi) {
+                        theta -= 2.0 * map.pi;
+                    }
+                    if (theta < -map.pi) {
+                        theta += 2.0 * map.pi;
+                    }
+                    theta *= sn;
+                    x = (ra * Math.sin(theta)) + map.xo;
+                    y = (ro - ra * Math.cos(theta)) + map.yo;
+
+                    x = Math.floor(x + 1.5);
+                    y = Math.floor(y + 1.5);
+
+                    $("#nx").html(x);
+                    $("#ny").html(y);
+
+                    console.log(x, y);
+
+
+                },
+                (error) => {
+                    console.error(error);
+                },
+                {
+                    enableHighAccuracy: false,
+                    maximumAge: 0,
+                    timeout: Infinity,
+                }
+            );
+        } else {
+            alert("GPS를 지원하지 않습니다");
+        }
+    };
+    getLocation();
+</script>
+
 </html>
