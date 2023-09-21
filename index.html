@@ -1,13 +1,18 @@
-<html>
-
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 
 <body>
-    <h1>Location:</h1>
-    <div>nx: <span name="nx" id="nx"></span></div>
-    <div>ny: <span name="ny" id="ny"></span></div>
+    <div class="container">
+        <h1>Location:</h1>
+        <h2>nx: <span name="nx" id="nx"></span></h2>
+        <h2>ny: <span name="ny" id="ny"></span></h2>
+    </div>
 </body>
 <script>
 
@@ -16,9 +21,6 @@
             // GPS를 지원하면
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    console.log(`latitude 위도 : ${position.coords.latitude}`);
-                    console.log(`longitude 경도 : ${position.coords.longitude}`);
-
                     var map = {};
 
                     var lon = position.coords.longitude;
@@ -74,10 +76,6 @@
 
                     $("#nx").html(x);
                     $("#ny").html(y);
-
-                    console.log(x, y);
-
-
                 },
                 (error) => {
                     console.error(error);
